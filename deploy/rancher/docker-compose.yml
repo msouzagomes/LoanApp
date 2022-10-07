@@ -1,0 +1,20 @@
+version: '2'
+services:
+  loan-app:
+    mem_limit: 536870912 #512M
+    mem_reservation: 402653184 #384M
+    image: ${IMAGE_NAME}
+    environment:
+      SPRING_PROFILES_ACTIVE: ${DEPLOYENV}
+      ENCRYPT_KEY: ${ENCRYPT_KEY}
+      SPRING_CLOUD_CONFIG_LABEL: ${SPRING_CLOUD_CONFIG_LABEL}
+      SPRING_CLOUD_CONFIG_USERNAME: ${CONFIG_SERVER_USERNAME}
+      SPRING_CLOUD_CONFIG_PASSWORD: ${CONFIG_SERVER_PASSWORD}
+      JAVA_OPTS: -Xmx384m
+      TZ: America/Sao_Paulo
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=${RANCHER_STACK_NAME}/${REPOSITORY_NAME}
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.pull_image: always

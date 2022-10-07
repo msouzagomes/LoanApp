@@ -1,0 +1,150 @@
+### GENERAL ###
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+
+spring:
+
+  ### RABBIT ###
+  rabbitmq:
+    host: dev-rabbit.calcard.com.br
+    port: 5672
+    username: guest
+    password: guest
+    virtualHost: /
+
+  ### SLEUTH ###
+  sleuth:
+    baggage:
+      remote-fields:
+        - X-CCRED-TRANSACTIONAL-ID
+
+### INTEGRATION ###
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+
+### CIRCUITBREAKER ###
+resilience4j:
+  circuitbreaker:
+    instances:
+      AutBankClient:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED #TIME_BASED
+        minimumNumberOfCalls: 4
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      AutBankClient:
+        maxAttempts: 3
+        waitDuration: 3s
+
+springdoc:
+  swagger-ui:
+    path: /docs
+    operationsSorter: method
+    disable-swagger-default-url: true
+  api-docs:
+    path: /api-docs
+
+api:
+  queue:
+    audit: audit.queue
+  audit:
+    exchange:
+      name: audit.exchange
+    collection:
+      name: auditoria-ep
+  cache:
+    redis:
+      #hostname: 192.168.99.234
+      hostname: dev-redis.calcard.com.br
+      password:
+      port: 6379
+      database: 9
+  egress:
+    host: ${API_LOAN-APP_EGRESS_HOST:https://hml-pierlabs.calcard.com.br}
+    consumer-key: ${API_LOAN-APP_EGRESS_CONSUMER_KEY:123456}
+  path:
+    store:
+      host: https://dev-core.calcard.com.br
+      basePath: /api/store-engine/v1
+      getStore: /store
+      getPromoters: /promoter/store/{id}
+    person:
+      host: https://dev-core.calcard.com.br
+      basePath: /api/person-engine/v2
+      person:
+        basePath: /person
+        getPersonByCpf: /person
+        detail: /detail
+        telephone: /{id}/telephone
+        address: /address
+    loan:
+      host: https://dev-credit-ep.calcard.com.br
+      basePath: /api/loan/v1
+      limite:
+        basePath: /limite
+        consultaLimite: /consultaLimite
+      simulacao:
+        basePath: /simulacao
+      cliente:
+        basePath: /cliente
+        cliente:
+          porId: /codigo/{codigoCliente}
+          porCpf: /cpf/{cpf}
+      endereco:
+        basePath: /endereco
+        consultarEndereco: /{cep}
+      documentos:
+        basePath: /documentos
+        tiposDocumentos: /tiposDocumentos
+        salvarDocumentos: /salvarDocumentos
+      agencia:
+        basePath: /agencia
+        consultarAgencia: /{codigoBanco}/{codigoAgencia}
+      banco:
+        basePath: /banco
+        lista: /lista
+      token:
+        basePath: /token
+        consultarMensagem: /mensagem
+        registrarValidacao: /registro/validacao
+        verificarValidacao: /validacao
+    account:
+      host: https://dev-core.calcard.com.br
+      basePath: /api/account-engine/v4/person/
+      account:
+        details: /accounts
+    notificacao:
+      host: https://dev-core.calcard.com.br
+      basePath: /api/notification
+      sms:
+        basePath: /v2/sms
+        send: /send
+      email:
+        basePath: /v1/email
+        send: /send
+
+notificacao:
+  sms:
+    codigo: "55"
+    ambiente: DEV, HML
+    numerosPermitidos: "51998782203, 55981485009"
+  email:
+    ambiente: DEV, HML
+    emailsPermitidos: "arthur.juchem@terceiros.calcard.com.br, mayara.lopes@terceiros.calcard.com.br, alexandre.medeiros@terceiros.calcard.com.br, francieli.hettler@terceiros.calcard.com.br"
+    emailRemetente: "arthur.juchem@terceiros.calcard.com.br"
+    subtitulo: "Confirmação de e-mail"
+
+tokenizer:
+  ttl: 240

@@ -1,0 +1,74 @@
+### GENERAL ###
+server:
+  servlet.context-path: /api/loan-app
+  compression.enabled: true
+  error.include-message: always
+
+### MONITORING ###
+management:
+  endpoints.web.exposure.include: metrics,prometheus,health
+  endpoint:
+    metrics:
+      enabled: true
+
+spring:
+  profiles.active: local
+  application.name: loan-app
+  cloud.config.fail-fast: true
+  main.web-application-type: SERVLET
+  main.allow-bean-definition-overriding: true
+  jackson:
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization.fail-on-unknown-properties: false
+    default-property-inclusion: NON_ABSENT
+
+  ### SLEUTH ###
+  sleuth:
+    baggage:
+      remote-fields:
+        - X-CCRED-TRANSACTIONAL-ID
+
+  ### LOCALE ###
+  mvc:
+    locale: pt_BR
+    localeResolver: fixed
+
+
+### INTEGRATION ###
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+        loggerLevel: basic
+
+api:
+  cache:
+    redis:
+      hostname: dev-redis.calcard.com.br
+      password: ''
+      port: 6379
+      ttl: 50400
+      database: 9
+  egress:
+    platform:
+      pch: /pch
+      pcpl: /pcpl
+    account:
+      v2:
+        find-by-id: /{id}
+        find-detail-by-id: /{id}/detail
+---
+### PROFILE ###
+spring:
+  profiles:
+    - local
+  cloud.config.enabled: false
+---
+spring:
+  cloud.config.uri: http://config-server.x-config:8888
+  profiles:
+    - dev
+    - qa
+    - prd

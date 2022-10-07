@@ -1,0 +1,6 @@
+version: '2'
+services:
+  loan-app:
+    scale: ${CONTAINER_SCALE}
+    start_on_create: true
+    
