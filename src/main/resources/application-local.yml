@@ -139,12 +139,7 @@ notificacao:
   sms:
     codigo: "55"
     ambiente: DEV, HML
-    numerosPermitidos: "51998782203, 55981485009"
-  email:
-    ambiente: DEV, HML
-    emailsPermitidos: "arthur.juchem@terceiros.calcard.com.br, mayara.lopes@terceiros.calcard.com.br, alexandre.medeiros@terceiros.calcard.com.br, francieli.hettler@terceiros.calcard.com.br"
-    emailRemetente: "arthur.juchem@terceiros.calcard.com.br"
-    subtitulo: "Confirmação de e-mail"
+    numerosPermitidos: "51998782203, 55981485009"  
 
 tokenizer:
   ttl: 240
